@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:ViewBase
+    xmlns:views="clr-namespace:PathwayGames.Views" xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:c="clr-namespace:PathwayGames.Controls"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             x:Name="self"
+             x:Class="PathwayGames.Views.SensorsView"
+             Visual="Material" BackgroundColor="White"
+             Title="{Binding Title}">
+
+    <NavigationPage.TitleView>
+        <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" Spacing="10">
+            <Image Source="logo.png" HorizontalOptions="Start" />
+            <Label Text="{Binding Title}" FontSize="Header" FontAttributes="Bold" TextColor="Black" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" />
+            <Label x:Name="EyeGazeIcon" FontFamily="Material" FontSize="26"  
+                   IsEnabled="{Binding Game.GameSettings.EyeGazeSensor}"
+                   HeightRequest="28" HorizontalOptions="End" VerticalTextAlignment="Center">
+                <Label.Triggers>
+                    <Trigger TargetType="Label"
+                        Property="IsEnabled" Value="True">
+                        <Setter Property="Text" Value="{StaticResource IconEye}" />
+                        <Setter Property="TextColor" Value="Red" />
+                    </Trigger>
+                    <Trigger TargetType="Label"
+                        Property="IsEnabled" Value="False">
+                        <Setter Property="Text" Value="{StaticResource IconEyeOff}" />
+                        <Setter Property="TextColor" Value="Black" />
+                    </Trigger>
+                </Label.Triggers>
+            </Label>
+
+            <Image x:Name="EEGIcon" HeightRequest="26" HorizontalOptions="End" IsEnabled="{Binding Game.GameSettings.EEGSensor}">
+                <Image.Triggers>
+                    <Trigger TargetType="Image" Property="IsEnabled" Value="True">
+                        <Setter Property="Source" Value="icon_head.png" />
+                    </Trigger>
+                    <Trigger TargetType="Image" Property="IsEnabled" Value="False">
+                        <Setter Property="Source" Value="icon_head_off.png" />
+                    </Trigger>
+                </Image.Triggers>
+            </Image>
+        </StackLayout>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:Name="SensorScreen">
+
+            <c:FaceSensorView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0"
+                                  TrackingStarted="FaceSensorView_TrackingStarted"
+                                  TrackingStopped="FaceSensorView_TrackingStopped"
+                                  EyeGazeChangedCommand="{Binding EyeGazeChangedCommand}"
+                                  ScreenPPI="{Binding UserSettings.ScreenPPI}"
+                                  WidthCompensation="{Binding UserSettings.VisualizationWidthCompensation}"
+                                  HeightCompensation="{Binding UserSettings.VisualizationHeightCompensation}"
+                                  RecordingEnabled="{Binding RecordingEnabled}"
+                                  EyeGazeVisualizationEnabled="{Binding VisualizationEnabled}"
+                                  CameraPreviewEnabled="True"
+                                  IsEnabled="True">
+                <c:FaceSensorView.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding FaceSensorTappedCommand}"
+                        NumberOfTapsRequired="2" />
+                </c:FaceSensorView.GestureRecognizers>
+            </c:FaceSensorView>
+
+            <Frame BackgroundColor="Black" HorizontalOptions="FillAndExpand" VerticalOptions="End" Padding="4,18,4,24">
+                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
+                    <Label FontSize="Micro" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" 
+                           LineBreakMode="WordWrap" TextColor="White" HorizontalTextAlignment="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding Resources[LabelSensitivity]}" />
+                                <Span Text=":" />
+                                <Span Text="{x:Static system:Environment.NewLine}"/>
+                                <Span Text="{Binding UserSettings.LiveViewSensitivity, Mode=OneWay}" FontAttributes="Bold" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <Ellipse Fill="{Binding LightColor}" StrokeThickness="5"
+                        WidthRequest="60" HeightRequest="60"
+                        HorizontalOptions="Center" VerticalOptions="Center"  >
+                        <Ellipse.Stroke>
+                            <RadialGradientBrush>
+                                <GradientStop Color="Black" Offset="0.1"/>
+                                <GradientStop Color="DarkGray" Offset="1.0"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Stroke>
+                    </Ellipse>
+
+                    <Label FontSize="Micro" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" 
+                           LineBreakMode="WordWrap" TextColor="White" HorizontalTextAlignment="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding Resources[LabelTolerance]}" />
+                                <Span Text=":" />
+                                <Span Text="{x:Static system:Environment.NewLine}"/>
+                                <Span Text="{Binding UserSettings.LiveViewTolerance, Mode=OneWay}" FontAttributes="Bold" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</views:ViewBase>

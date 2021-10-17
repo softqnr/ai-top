@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:ViewBase
+    xmlns:views="clr-namespace:PathwayGames.Views" xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:g="clr-namespace:PathwayGames.Gestures;assembly=PathwayGames"
+             xmlns:c="clr-namespace:PathwayGames.Controls"
+             x:Name="GamePage"
+             x:Class="PathwayGames.Views.GameView"
+             Visual="Material" BackgroundColor="White"
+             Title="{Binding Title}">
+
+    <NavigationPage.TitleView>
+        <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" Spacing="10">
+            <Image Source="logo.png" HorizontalOptions="Start" />
+            <Label Text="{Binding Title}" FontSize="Header" FontAttributes="Bold" TextColor="Black" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" />
+            <Label x:Name="EyeGazeIcon" FontFamily="Material" FontSize="26"  
+                   IsEnabled="{Binding Game.GameSettings.EyeGazeSensor}"
+                   HeightRequest="28" HorizontalOptions="End" VerticalTextAlignment="Center">
+                <Label.Triggers>
+                    <Trigger TargetType="Label"
+                        Property="IsEnabled" Value="True">
+                        <Setter Property="Text" Value="{StaticResource IconEye}" />
+                        <Setter Property="TextColor" Value="Red" />
+                    </Trigger>
+                    <Trigger TargetType="Label"
+                        Property="IsEnabled" Value="False">
+                        <Setter Property="Text" Value="{StaticResource IconEyeOff}" />
+                        <Setter Property="TextColor" Value="Black" />
+                    </Trigger>
+                </Label.Triggers>
+            </Label>
+            
+            <Image x:Name="EEGIcon" HeightRequest="26" HorizontalOptions="End" IsEnabled="{Binding Game.GameSettings.EEGSensor}">
+                <Image.Triggers>
+                    <Trigger TargetType="Image" Property="IsEnabled" Value="True">
+                        <Setter Property="Source" Value="icon_head.png" />
+                    </Trigger>
+                    <Trigger TargetType="Image" Property="IsEnabled" Value="False">
+                        <Setter Property="Source" Value="icon_head_off.png" />
+                    </Trigger>
+                </Image.Triggers>
+            </Image>
+        </StackLayout>
+    </NavigationPage.TitleView>
+        
+    <ContentPage.Content>
+        <Grid Padding="10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1"/>
+            </Grid.RowDefinitions>
+
+            <StackLayout x:Name="GameSection"
+                         Grid.Column="0" Grid.Row="0"
+                         VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" 
+                         Orientation="Vertical">
+                <Frame BackgroundColor="{Binding SlideBorderColor}" Padding="8,8,8,8" CornerRadius="8" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasShadow="False">
+                    <Frame BackgroundColor="White" Padding="8,8,8,8" CornerRadius="8" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasShadow="False">
+                        <c:UniformImageGrid ItemsSource="{Binding SlideImages}" ColumnCount="{Binding ImageGridColumns}" 
+                                            BackgroundColor="White" ColumnSpacing="4" RowSpacing="4"
+                                        VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        </c:UniformImageGrid>
+                    </Frame>
+                </Frame>
+
+                <ImageButton Source="button.png" g:Gesture.Tapped="{Binding ButtonTappedCommand}" x:Name="BuzzerButton"
+                    BackgroundColor="Transparent"
+                    WidthRequest="160"
+                    HeightRequest="160"
+                    VerticalOptions="End" 
+                    HorizontalOptions="Center"
+                    Aspect="AspectFit">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Source" Value="button.png"/>
+                                </VisualState.Setters>
+                            </VisualState>
+
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Source" Value="button_pressed.png"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                </ImageButton>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Grid.Column="0" Grid.Row="1">
+                <Label FontSize="Small">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding Resources[LabelSlide]}"/>
+                            <Span Text=" "/>
+                            <Span Text="{Binding SlideIndex, Mode=OneWay}" />
+                            <Span Text="/" />
+                            <Span Text="{Binding SlideCount, Mode=OneWay}" />
+                            <Span Text=" – " />
+                            <Span Text="{Binding Game.SessionData.UserName, Mode=OneWay}" />
+                            <Span Text=" – " />
+                            <Span Text="{Binding Source={x:Static x:DateTime.Now}, StringFormat='{}{0:dd/MM/yyyy hh:mm}'}" />
+                            <Span Text=" – " />
+                            <Span Text="{Binding Game.SessionData.Seed, Mode=OneWay}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </StackLayout>
+            <c:FaceSensorView Grid.Column="0" Grid.Row="2" WidthRequest="96" HeightRequest="128" 
+                                TrackingStarted="FaceSensorView_TrackingStarted"
+                                TrackingStopped="FaceSensorView_TrackingStopped"
+                                EyeGazeChangedCommand="{Binding EyeGazeChangedCommand}"
+                                ScreenPPI="{Binding Game.GameSettings.ScreenPPI}"
+                                WidthCompensation="{Binding Game.GameSettings.VisualizationWidthCompensation}"
+                                HeightCompensation="{Binding Game.GameSettings.VisualizationHeightCompensation}"
+                                EyeGazeVisualizationEnabled="{Binding Game.GameSettings.EyeGazeVisualisation}"
+                                CameraPreviewEnabled="False"
+                                RecordingEnabled="True"
+                                IsEnabled="{Binding Game.GameSettings.EyeGazeSensor}" />
+        </Grid>
+    </ContentPage.Content>
+
+</views:ViewBase>

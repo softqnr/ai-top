@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:b="clr-namespace:PathwayGames.Behaviors"
+             xmlns:c="clr-namespace:PathwayGames.Converters"
+             x:Class="PathwayGames.Views.MasterView"
+             x:Name="MasterPage"
+             Title="Pathway+ Games">
+    
+    <ContentPage.IconImageSource>
+        <FontImageSource
+                    FontFamily="Material"
+                    Glyph="{StaticResource IconHamburger}" />
+    </ContentPage.IconImageSource>
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <c:ItemTappedEventArgsConverter x:Key="ItemTappedConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <StackLayout>
+        <ListView x:Name="MenuItemsListView"
+              SeparatorVisibility="None"
+              HasUnevenRows="true"
+              ItemsSource="{Binding MenuItems}">
+            <ListView.Behaviors>
+                <b:EventToCommandBehavior Command="{Binding NavigationItemSelectedCommand}" 
+                                          EventArgsConverter="{StaticResource ItemTappedConverter}" EventName="ItemTapped"/>
+            </ListView.Behaviors>
+            <ListView.Header>
+        <Grid BackgroundColor="{StaticResource primary_dark}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+          </Grid.RowDefinitions>
+                    <Image Source="logo_white.png" 
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Grid.Column="1"
+                           Grid.Row="1" />
+            
+                    <Label TextColor="White" HorizontalOptions="Center"
+                      Grid.Column="1"
+                      Grid.Row="2">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                <Span Text="{Binding Resources[ApplicationName]}" FontSize="Large" Style="{DynamicResource SubtitleStyle}"/>
+                                <Span Text="{Binding Version}" FontSize="Small" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                    </Label>
+                    <Label TextColor="White" Grid.Column="1" Grid.Row="3" FontAttributes="Bold" HorizontalOptions="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding BindingContext.User.UserName, Source={x:Reference MasterPage}}" />
+                                <Span Text=" - " />
+                                <Span Text="{Binding BindingContext.User.UserType, Source={x:Reference MasterPage}}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </Grid>
+      </ListView.Header>
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <Grid Padding="5,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>                            
+                <Label Text="{Binding IconSource}" FontSize="44" 
+                        FontFamily="Material"
+                        TextColor="Black"/>
+
+                <Label Grid.Column="1" Text="{Binding Title}" FontSize="Large" VerticalOptions="Center"/>
+            </Grid>
+        </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+        <Picker BackgroundColor="Transparent"                    
+                ItemsSource="{Binding LanguagesList}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                HorizontalOptions="Start"
+                WidthRequest="100"/>
+    </StackLayout>
+</ContentPage>

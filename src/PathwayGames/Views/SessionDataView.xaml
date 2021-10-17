@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:PathwayGames"
+             x:Class="PathwayGames.Views.SessionDataView"
+             x:Name="self"
+             Visual="Material"
+             Title="{Binding Title}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding ExportUserDataCommand}" Order="Primary" Priority="0" Text="{Binding Resources[ButtonPack]}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource
+                    FontFamily="Material"
+                    Glyph="{StaticResource IconDownload}"
+                    Size="24" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem x:Name="ExportAllToolbarItem" Command="{Binding ExportAllUserDataCommand}" Order="Primary" Priority="1" Text="{Binding Resources[ButtonPackAll]}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource
+                    FontFamily="Material"
+                    Glyph="{StaticResource IconDownloadMultiple}"
+                    Size="24" />    
+            </ToolbarItem.IconImageSource>
+         </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <CollectionView x:Name="SessionDataList" ItemsSource="{Binding GameSessions}" Margin="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <CollectionView.EmptyView>
+            <Label Text="{Binding Resources[LabelNoGameSessionsFound]}"/>
+        </CollectionView.EmptyView>
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Orientation="Vertical" VerticalOptions="Center" Padding="10,10" Grid.Row="0" Grid.Column="0">
+                        <Label Text="{Binding GameType}" FontAttributes="Bold"/>
+                        <Label Text="{Binding DateStarted, Mode=OneWay, StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="Small"/>
+                    </StackLayout>
+                    
+                    <Button Text="{StaticResource IconJson}" VerticalOptions="Start" Grid.Row="0" Grid.Column="1" FontFamily="Material" FontSize="32"
+                            Command="{Binding BindingContext.GameDataCommand, Source={x:Reference self}}" CommandParameter="{Binding GameDataFile}" Margin="10" TextColor="Black" />
+                    
+                    <Button Text="{StaticResource IconDelete}" VerticalOptions="Start" Grid.Row="0" Grid.Column="2" FontFamily="Material" FontSize="32"
+                            Command="{Binding BindingContext.DeleteGameSessionCommand, Source={x:Reference self}}" CommandParameter="{Binding .}" Margin="10" 
+                            IsVisible="{Binding Source={x:Static local:App.SelectedUser},Path=IsAdmin}"
+                            BackgroundColor="Transparent" TextColor="Black" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>
